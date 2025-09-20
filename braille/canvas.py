@@ -13,7 +13,7 @@ class Canvas:
         if self.w<=x or self.h<=y or x < 0 or y < 0: return 
         c=self.data[x//2][y//4]
         c.set_bit(x%2,y%4,on)
-        c.set_pixel_color(x%2,y%4,to_base_color(color,x,y))
+        if color:c.set_pixel_color(x%2,y%4,to_base_color(color,x,y))
     def set_pixel_on(self,x:int,y:int,on=True):
         c=self.data[x//2][y//4]
         c.set_bit(x%2,y%4,on)
