@@ -20,7 +20,6 @@ class Heart:
 if __name__ == "__main__":
     hearts: list[Heart] = []
     c = Canvas(200,80)
-    c.write_text(c.w//2,c.h//2-1,"I love you,\n  ????!",(255,127,127))
     hearts.append(Heart.random(c))
     while True:
         sleep(0.1)

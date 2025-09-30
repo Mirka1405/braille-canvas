@@ -2,22 +2,29 @@ from .colors import BasicColorType
 class AbstractCanvasElement:
     def __init__(self,color:tuple[int,int,int]|None=None):
         self.colors: list[BasicColorType] = [color for _ in range(8)]
+        self.__need_col_recalc:bool = True
+        self.__last_color:tuple[int,int,int]|None = None
 
     @property
     def color(self):
+        if not self.__need_col_recalc: return self.__last_color
         r,g,b,n = 0,0,0,0
         for i in self.colors:
             if i is not None:
                 r,g,b=r+i[0],g+i[1],b+i[2]
                 n+=1
-        if n==0: return None
-        return r//8,g//8,b//8
+        self.__need_col_recalc = False
+        self.__last_color = None if n==0 else (r//8,g//8,b//8)
+        return self.__last_color
     def is_empty(self) -> bool: return True
     def set_bit(self,x:int,y:int,bit=True): pass
     def __str__(self): pass
-    def reset_colors(self): self.colors = [None for _ in range(8)]
+    def reset_colors(self):
+        self.colors = [None for _ in range(8)]
+        self.__need_col_recalc = True
     def set_pixel_color(self,x:int,y:int,color:BasicColorType):
         self.colors[x*4+y]=color
+        self.__need_col_recalc = True
     def get_pixel_color(self,x:int,y:int) -> BasicColorType:
         return self.colors[x*4+y]
     def get_color_str(self):

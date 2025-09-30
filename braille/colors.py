@@ -13,8 +13,8 @@ class GradientColor(AbstractColor):
     def get(self,x=0,y=0):
         dist = ((x-self.colcentre[0])**2+(y-self.colcentre[1])**2)**0.5 / self.maxdist
         if dist>1: dist = 1
-        r1,g1,b1 = self.col1.get(x,y)
-        r2,g2,b2 = self.col2.get(x,y)
+        r1,g1,b1 = to_base_color(self.col1,x,y)
+        r2,g2,b2 = to_base_color(self.col2,x,y)
         return int(r2*dist+r1*(1-dist)),int(g2*dist+g1*(1-dist)),int(b2*dist+b1*(1-dist))
 class RainbowGradient(AbstractColor):
     def __init__(self, period:int=100, shift:int = 0):
