@@ -2,17 +2,23 @@ from .colors import ColorType,BasicColorType,to_base_color
 from .canvas_elements import AbstractCanvasElement,BrailleChar,SimpleChar
 import math
 
+class Prefixes:
+    bold = "\033[1m"
+    reset = "\033[0m"
 class Canvas:
-    def __init__(self,w:int,h:int,default_element_type:type[AbstractCanvasElement]=BrailleChar):
+    def __init__(self,w:int,h:int,default_element_type:type[AbstractCanvasElement]=BrailleChar,prefix=Prefixes.reset):
         self.w,self.h = w,h
+        self.p = prefix
         self.element_type=default_element_type
         self.data: list[list[AbstractCanvasElement]] = [[self.element_type() for _ in range(math.ceil(h/4))] for _ in range(math.ceil(w/2))]
-    def erase(self):
+    def erase(self,w:int|None=None,h:int|None=None):
+        if w: self.w=w
+        if h: self.h=h
         self.data: list[list[AbstractCanvasElement]] = [[self.element_type() for _ in range(math.ceil(self.h/4))] for _ in range(math.ceil(self.w/2))]
     def draw_point(self,x:int,y:int,color:ColorType = None,on=True):
         if self.w<=x or self.h<=y or x < 0 or y < 0: return 
         c=self.data[x//2][y//4]
-        c.set_bit(x%2,y%4,on)
+        if on is not None: c.set_bit(x%2,y%4,on)
         if color:c.set_pixel_color(x%2,y%4,to_base_color(color,x,y))
     def set_pixel_on(self,x:int,y:int,on=True):
         c=self.data[x//2][y//4]
@@ -52,12 +58,14 @@ class Canvas:
         if x1>x2: x1,x2=x2,x1
         if y1>y2: y1,y2=y2,y1
         if filled:
-            for i in range(y1,y2+1): self.draw_line(x1,i,x2,i,color)
+            for i in range(y1,y2+1): self.draw_line(x1,i,x2,i,color,on)
             return
         self.draw_line(x1,y1,x2,y1,color,on)
         self.draw_line(x1,y2,x2,y2,color,on)
         self.draw_line(x1,y1,x1,y2,color,on)
         self.draw_line(x2,y1,x2,y2,color,on)
+    def fill(self,color:ColorType=None,on=True):
+        self.draw_box(0,0,self.w,self.h,color,True,on)
     def draw_border(self,color:ColorType=None,on=True): self.draw_box(0,0,self.w-1,self.h-1,color,on=on)
     def write_text(self,start_x:int,start_y:int,text:str,color:ColorType=None):
         start_x//=2
@@ -86,5 +94,7 @@ class Canvas:
             if empty: emptyrows+=1
             else: emptyrows=0
             rows.append(''.join(row))
-        if emptyrows>0: return '\033[0m\n'.join(rows[:-emptyrows])+"\033[0m"
-        return '\033[0m\n'.join(rows)+"\033[0m"
+        if emptyrows>0: return f"{self.p}{f'{self.p}\n'.join(rows[:-emptyrows])}{Prefixes.reset}"
+        return f"{self.p}{f'{self.p}\n'.join(rows)}{Prefixes.reset}"
+    def set_str_prefix(self,prefix:str=Prefixes.reset):
+        self.p = prefix

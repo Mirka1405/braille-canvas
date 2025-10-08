@@ -3,8 +3,7 @@ from .canvas_elements import *
 from .colors import *
 from .shaders import *
 from .console_controls import *
-from .images import *
-__all__ = ["shaders","canvas","colors","images","console_controls","canvas_elements"]
+__all__ = ["shaders","canvas","colors","console_controls","canvas_elements"]
 import sys
 from io import TextIOWrapper
 def set_stdout_to_UTF8():
