@@ -18,7 +18,7 @@ inputy.grid(row=0,column=1)
 
 slider1 = Scale(root, to=50, orient="horizontal", length=200, label="Block size")
 slider1.grid(row=1,columnspan=2)
-slider2 = Scale(root, to=40, orient="horizontal", length=200, label="Constant")
+slider2 = Scale(root, from_=-40, to=40, orient="horizontal", length=200, label="Constant")
 slider2.grid(row=2,columnspan=2)
 def select_image():
     file_path = filedialog.askopenfilename()

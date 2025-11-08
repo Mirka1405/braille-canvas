@@ -158,7 +158,7 @@ class AdaptiveThresholdFilter(AbstractShader):
                     local_mean = sum_val / count
                     threshold = local_mean - self.c
                     
-                    new_pixel = 255 if current_val > threshold else 0
+                    new_pixel = 255 if current_val >= threshold else 0
                     if self.invert:
                         new_pixel = 255 - new_pixel
                     
