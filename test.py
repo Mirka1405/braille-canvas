@@ -14,7 +14,7 @@ if a=="2":
     print(c)
     exit()
 if a=="3":
-    qrcode_demo()
+    qrcode_demo("https://www.youtube.com/shorts/oxr6xWEI_EY")
     exit()
 print("Please expand your terminal to be at least 150x200 chars in size...")
 sleep(3)

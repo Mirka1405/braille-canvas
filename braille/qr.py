@@ -28,14 +28,14 @@ class QRBrailleCanvasFactory(BaseImage):
     def save(self, stream, kind=None):
         """Save the canvas"""
         return self.canvas.save(stream, format=kind)
-def qrcode_demo():
+def qrcode_demo(data=None):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.ERROR_CORRECT_L,
         box_size=1,
         border=2,
     )
-    qr.add_data(f'https://www.youtube.com/watch?v={"QcXgW9w4wQd"[::-1]}')
+    qr.add_data(data or f'https://www.youtube.com/watch?v={"QcXgW9w4wQd"[::-1]}')
     img = qr.make_image(image_factory=QRBrailleCanvasFactory)
     img.canvas.draw_border()
     img.canvas.set_str_prefix(Prefixes.bold)

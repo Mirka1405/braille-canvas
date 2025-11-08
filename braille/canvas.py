@@ -96,5 +96,21 @@ class Canvas:
             rows.append(''.join(row))
         if emptyrows>0: return f"{self.p}{f'{self.p}\n'.join(rows[:-emptyrows])}{Prefixes.reset}"
         return f"{self.p}{f'{self.p}\n'.join(rows)}{Prefixes.reset}"
+    def str_without_color(self):
+        rows = []
+        emptyrows = 0
+        for y in range(len(self.data[0])):
+            row = []
+            empty = True
+            for x in range(len(self.data)):
+                c = self.data[x][y]
+                if not c.is_empty():
+                    empty = False
+                row.append(str(c))
+            if empty: emptyrows+=1
+            else: emptyrows=0
+            rows.append(''.join(row))
+        if emptyrows>0: return '\n'.join(rows[:-emptyrows])
+        return '\n'.join(rows)
     def set_str_prefix(self,prefix:str=Prefixes.reset):
         self.p = prefix
