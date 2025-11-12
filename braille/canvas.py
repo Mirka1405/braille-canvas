@@ -74,6 +74,8 @@ class Canvas:
             for x,c in enumerate(line):
                 self.data[x+start_x][y+start_y]=SimpleChar(c,to_base_color(color,(x+start_x)*2,(y+start_y)*2))
     def __str__(self):
+        """Default metamethod for printing to your console. Assumes support of color ANSI escapes by your terminal.
+        Use .str_without_color() if that's not the case."""
         rows = []
         lastcol = None
         lastcolstr = None
@@ -97,6 +99,7 @@ class Canvas:
         if emptyrows>0: return f"{self.p}{f'{self.p}\n'.join(rows[:-emptyrows])}{Prefixes.reset}"
         return f"{self.p}{f'{self.p}\n'.join(rows)}{Prefixes.reset}"
     def str_without_color(self):
+        """Render the grid without considering colors. This string will contain no ANSI escapes."""
         rows = []
         emptyrows = 0
         for y in range(len(self.data[0])):
@@ -112,5 +115,31 @@ class Canvas:
             rows.append(''.join(row))
         if emptyrows>0: return '\n'.join(rows[:-emptyrows])
         return '\n'.join(rows)
+    def str_nonmono(self,fillin:str="\u2006"):
+        """Render the grid, if the target platform uses a non-monospace font.
+        
+        I personally tested and found that \\u2006 (1/6 em whitespace) makes the widths line up perfectly most of the time.
+        Use the fillin argument (defaults to '\\u2006') if your font uses a different width for the empty braille character.
+        
+        Only guaranteed to work with pure-braille grids, as I don't have a dynamic way of looking up a width of each symbol;
+        it would be way too unnecessary for the scope of this project."""
+        rows = []
+        emptyrows = 0
+        for y in range(len(self.data[0])):
+            row = []
+            empty = True
+            for x in range(len(self.data)):
+                c = self.data[x][y]
+                row.append(str(c))
+                if not c.is_empty():
+                    empty = False
+                    continue
+                row.append(fillin)
+            if empty: emptyrows+=1
+            else: emptyrows=0
+            rows.append(''.join(row))
+        if emptyrows>0: return '\n'.join(rows[:-emptyrows])
+        return '\n'.join(rows)
+
     def set_str_prefix(self,prefix:str=Prefixes.reset):
         self.p = prefix

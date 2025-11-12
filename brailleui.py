@@ -46,7 +46,7 @@ def render():
     Globals.lf.block_size = slider1.get()
     Globals.lf.c = slider2.get()
     Globals.lf.apply_to_canvas(Globals.image)
-    text.insert("1.0",Globals.image.str_without_color().replace(chr(10240),f"{chr(10240)}\u2006"))
+    text.insert("1.0",Globals.image.str_nonmono())
     text.update_idletasks()
 
 inputupdate = Button(root,text="Render",command=render)
