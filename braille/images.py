@@ -3,6 +3,7 @@ from time import sleep
 from .console_controls import ConsoleOutputControls
 from .canvas_elements import AbstractCanvasElement,BrailleChar,Rectangle
 from .canvas import Canvas
+from .shaders import LuminosityFilter, AbstractShader
 def add_open_image(c:Canvas,img:ImageFile,x:int=0,y:int=0,w:int|None=None,h:int|None=None,skipcolor:tuple[int,int,int] | None = None):
     if w is None:
         w = c.w-x
@@ -22,12 +23,14 @@ def add_image(c:Canvas,path:str,x:int=0,y:int=0,w:int|None=None,h:int|None=None,
     add_open_image(c,Image.open(path),x,y,w,h,skipcolor)
 class AnimatedImage:
     def __init__(self, path, w: int|None=None, h: int|None=None,
-                default_element_type: type[AbstractCanvasElement]=BrailleChar):
+                default_element_type: type[AbstractCanvasElement]=BrailleChar,
+                shader: AbstractShader|None = None):
         self.path = path
         self.canvas = Canvas(w, h, default_element_type)
         self.w = w
         self.h = h
         self.element_type = default_element_type
+        self.shader = shader
 
     def extract_frames(self):
         """Yield each frame as a separate Image object"""
@@ -39,8 +42,9 @@ class AnimatedImage:
 
     def view_frames(self):
         for i, frame in enumerate(self.extract_frames()):
-            self.canvas = Canvas(self.w, self.h, self.element_type)
+            self.canvas = Canvas(self.w, self.h, self.element_type, use_trailing_nl_optimisation=False)
             add_open_image(self.canvas, frame)
+            if self.shader: self.shader.apply_to_canvas(self.canvas)
             yield self.canvas,frame.info.get("duration",100)
 
     def animate(self,times:int=-1,preload:bool=False):
@@ -66,7 +70,7 @@ class AnimatedImage:
 
 
 def animation_demo(times:int=-1,preload:bool=False):
-    anim = AnimatedImage("little-cute.gif", 150, 200, Rectangle)
+    anim = AnimatedImage("bad_apple.gif", 96, 72, shader=LuminosityFilter(200,blacknwhite=True))
     anim.animate(times,preload)
     ConsoleOutputControls.clear_terminal()
 if __name__ == "__main__":

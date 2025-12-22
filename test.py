@@ -16,7 +16,7 @@ if a=="2":
 if a=="3":
     qrcode_demo("https://www.youtube.com/shorts/oxr6xWEI_EY")
     exit()
-print("Please expand your terminal to be at least 150x200 chars in size...")
+print("Please expand your terminal to be at least 75x50 chars in size...")
 sleep(3)
 braille.ConsoleOutputControls.clear_and_move()
 braille.images.animation_demo()

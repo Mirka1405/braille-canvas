@@ -6,10 +6,11 @@ class Prefixes:
     bold = "\033[1m"
     reset = "\033[0m"
 class Canvas:
-    def __init__(self,w:int,h:int,default_element_type:type[AbstractCanvasElement]=BrailleChar,prefix=Prefixes.reset):
+    def __init__(self,w:int,h:int,default_element_type:type[AbstractCanvasElement]=BrailleChar,prefix=Prefixes.reset,use_trailing_nl_optimisation=True):
         self.w,self.h = w,h
         self.p = prefix
         self.element_type=default_element_type
+        self.nl_optim = use_trailing_nl_optimisation
         self.data: list[list[AbstractCanvasElement]] = [[self.element_type() for _ in range(math.ceil(h/4))] for _ in range(math.ceil(w/2))]
     def erase(self,w:int|None=None,h:int|None=None):
         if w: self.w=w
@@ -96,7 +97,7 @@ class Canvas:
             if empty: emptyrows+=1
             else: emptyrows=0
             rows.append(''.join(row))
-        if emptyrows>0: return f"{self.p}{f'{self.p}\n'.join(rows[:-emptyrows])}{Prefixes.reset}"
+        if emptyrows>0 and self.nl_optim: return f"{self.p}{f'{self.p}\n'.join(rows[:-emptyrows])}{Prefixes.reset}"
         return f"{self.p}{f'{self.p}\n'.join(rows)}{Prefixes.reset}"
     def str_without_color(self):
         """Render the grid without considering colors. This string will contain no ANSI escapes."""

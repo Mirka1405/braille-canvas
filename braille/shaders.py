@@ -49,15 +49,18 @@ class GrayscaleShader(AbstractShader):
         gv = get_grayscale(c)
         canvas.draw_point(x,y,(gv,gv,gv),canvas.is_pixel_on(x,y))
 class LuminosityFilter(AbstractShader):
-    def __init__(self,minlum:int,invert:bool=False,conditions:list[ShaderCondition]|None=None):
+    def __init__(self,minlum:int,invert:bool=False,conditions:list[ShaderCondition]|None=None,blacknwhite:bool=False):
         super().__init__(conditions)
         self.minlum = minlum
         self.invert = invert
+        self.bw = blacknwhite
     def apply_to_canvas_pixel(self,canvas:Canvas,x:int=0,y:int=0):
         c = canvas.get_pixel_color(x,y)
         if c==None: return
         gv = get_grayscale(c)
-        canvas.draw_point(x,y,(gv,gv,gv),(gv>self.minlum)!=self.invert)
+        enable = (gv>self.minlum)!=self.invert
+        col = 255 if enable else 0
+        canvas.draw_point(x,y,(col,col,col) if self.bw else (gv,gv,gv),enable)
 class DitheringFilter(AbstractShader):
     def __init__(self, minlum: int = 128, invert: bool = False, conditions: list[ShaderCondition] | None = None):
         super().__init__(conditions)
